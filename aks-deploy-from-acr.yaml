@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: Hello-world
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: Hello-world
+  template:
+    metadata:
+      labels:
+        app: Hello-world
+    spec:
+      containers:
+      - name: Hello-world
+        image: aksdemomtn.azurecr.io/manijami/AKSDemo:#{Build.BuildId}#
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8085
+# service type loadbalancer       
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: springboot-app
+    k8s-app: springboot-app
+  name: springboot-app
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8085
+  type: LoadBalancer
+  selector:
+    app: springboot-app
